@@ -11,6 +11,7 @@ const source = (url: string) =>
 export const BATCH: ImportArticle[] = [
   {
     slug: "july-charter-one-year-reform-disagreements",
+    image: { file: "Jatiya Sangsad Bhaban, Dhaka, Bangladesh.jpg", alt: "ঢাকার শেরেবাংলা নগরে জাতীয় সংসদ ভবন", caption: "জাতীয় সংসদ ভবন, ঢাকা। ফাইল ছবি" },
     cat: "politics",
     publishedAt: "2026-10-17T06:00:00Z",
     headline: "জুলাই সনদের এক বছর: সই হলেও মৌলিক সংস্কারে এখনো মেলেনি দলগুলো",
@@ -43,6 +44,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "mecca-execution-two-bangladeshis-consulate-letter",
+    image: { file: "Masjid al-Haram 2022.jpg", alt: "মক্কার পবিত্র মসজিদুল হারাম", caption: "পবিত্র মক্কার মসজিদুল হারাম। ফাইল ছবি" },
     cat: "probash",
     publishedAt: "2026-10-17T05:20:00Z",
     headline: "মক্কায় দুই বাংলাদেশির মৃত্যুদণ্ড: আগে জানত না সরকার, বিস্তারিত চেয়ে সৌদিকে চিঠি",
@@ -73,6 +75,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "ncp-central-leader-quits-over-jamaat-ties",
+    image: { file: "Ncp flag.jpg", alt: "জাতীয় নাগরিক পার্টির (এনসিপি) পতাকা", caption: "জাতীয় নাগরিক পার্টির (এনসিপি) পতাকা। ফাইল ছবি" },
     cat: "politics",
     publishedAt: "2026-10-17T04:40:00Z",
     headline: "‘জামায়াতের সঙ্গে একাকার’ হওয়ার অভিযোগে এনসিপি ছাড়লেন কেন্দ্রীয় সংগঠক আবদুর রহমান",
@@ -102,6 +105,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "imf-report-29-percent-educated-youth-unemployed",
+    image: { file: "Headquarters of the International Monetary Fund (Washington, DC).jpg", alt: "ওয়াশিংটনে আন্তর্জাতিক মুদ্রা তহবিলের (আইএমএফ) সদর দপ্তর", caption: "ওয়াশিংটন ডিসিতে আইএমএফের সদর দপ্তর। ফাইল ছবি" },
     cat: "economy",
     publishedAt: "2026-10-17T04:00:00Z",
     headline: "আইএমএফ: দেশের উচ্চশিক্ষিত তরুণদের ২৯ শতাংশ বেকার, অর্ধেকই যোগ্যতার চেয়ে নিচের কাজে",
@@ -134,6 +138,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "srb-question-leak-ring-government-employees-arrested",
+    image: { file: "National Board of Revenue (NBR), Agargaon 5.jpg", alt: "ঢাকার আগারগাঁওয়ে জাতীয় রাজস্ব বোর্ডের (এনবিআর) ভবন", caption: "আগারগাঁওয়ে জাতীয় রাজস্ব বোর্ডের (এনবিআর) ভবন। ফাইল ছবি" },
     cat: "bangladesh",
     publishedAt: "2026-10-17T03:20:00Z",
     headline: "যুব উন্নয়নের প্রশ্নপত্র ফাঁস: ভোরেই প্রশ্ন পেতেন এনবিআরের দুই কর্মী, গ্রেপ্তার ৭",
@@ -167,6 +172,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "riyadh-airport-reopens-107-dhaka-flights-disrupted",
+    image: { file: "Riyadh-airport.jpg", alt: "রিয়াদের কিং খালেদ আন্তর্জাতিক বিমানবন্দর", caption: "রিয়াদের কিং খালেদ আন্তর্জাতিক বিমানবন্দর। ফাইল ছবি" },
     cat: "probash",
     publishedAt: "2026-10-17T02:40:00Z",
     headline: "রিয়াদ বিমানবন্দর খুলল, তবে এক সপ্তাহে ঢাকা থেকে ১০৭ ফ্লাইট বিঘ্নিত, ভোগান্তিতে সাড়ে ১৬ হাজার যাত্রী",
@@ -198,6 +204,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "cuet-syndicate-meeting-without-university-members",
+    image: { file: "Entrance of CUET.jpg", alt: "চট্টগ্রাম প্রকৌশল ও প্রযুক্তি বিশ্ববিদ্যালয়ের (চুয়েট) প্রবেশপথ", caption: "চুয়েটের প্রবেশপথ। ফাইল ছবি" },
     cat: "education",
     publishedAt: "2026-10-17T02:00:00Z",
     headline: "শাটডাউনের ২৫তম দিনে অনলাইনে চুয়েটের সিন্ডিকেট সভা, উপাচার্য ছাড়া ছিলেন না কোনো শিক্ষক সদস্য",
@@ -223,6 +230,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "us-considers-mother-of-all-bombs-iran",
+    image: { file: "MOAB bomb.jpg", alt: "জিবিইউ-৪৩/বি ‘মাদার অব অল বম্বস’ বোমা", caption: "মার্কিন জিবিইউ-৪৩/বি (এমওএবি) বোমা। ফাইল ছবি" },
     cat: "international",
     publishedAt: "2026-10-17T01:20:00Z",
     headline: "ইরানে ‘মাদার অব অল বম্বস’ ফেলার কথা ভাবছে যুক্তরাষ্ট্র, কতটা কাজে আসবে এই বোমা",
@@ -255,6 +263,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "pink-run-2026-oishi-breast-cancer-awareness",
+    image: { file: "Hatirjheel Lake Dhaka Bangladesh.jpg", alt: "ঢাকার হাতিরঝিল লেক", caption: "রাজধানীর হাতিরঝিল, যেখানে পিংক রান অনুষ্ঠিত হয়। ফাইল ছবি" },
     cat: "entertainment",
     sub: "lifestyle",
     publishedAt: "2026-10-17T00:40:00Z",
@@ -285,6 +294,7 @@ export const BATCH: ImportArticle[] = [
   },
   {
     slug: "bnp-reserved-seat-by-election-nomination-forms",
+    image: { file: "Flag of the Bangladesh Nationalist Party.svg", alt: "বাংলাদেশ জাতীয়তাবাদী দলের (বিএনপি) পতাকা", caption: "বিএনপির দলীয় পতাকা" },
     cat: "politics",
     publishedAt: "2026-10-17T00:00:00Z",
     headline: "মিষ্টির ছেড়ে দেওয়া সংরক্ষিত আসনে বিএনপির মনোনয়ন চান প্রায় ৭০ নেত্রী",
