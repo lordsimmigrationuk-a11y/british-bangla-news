@@ -1,0 +1,236 @@
+// BRITISH BANGLA NEWS data model.
+// Development uses SQLite. For production run `npm run db:use-postgres`, which
+// switches the provider below to "postgresql" (see README → Database).
+// Status and role values are plain strings validated in src/lib/constants.ts so
+// the same schema works on both providers.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  passwordHash String
+  name         String
+  slug         String            @unique
+  role         String            @default("REPORTER") // ADMIN | EDITOR | REPORTER
+  designation  String?
+  bio          String?
+  avatarId     String?
+  avatar       Media?            @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
+  active       Boolean           @default(true)
+  canLogin     Boolean           @default(true)
+  showOnTeam   Boolean           @default(true)
+  isSample     Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  sessions     Session[]
+  articles     Article[]         @relation("ArticleAuthor")
+  revisions    ArticleRevision[]
+  uploads      Media[]           @relation("MediaUploader")
+}
+
+model Session {
+  id        String   @id // SHA-256 of the cookie token; the raw token is never stored
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  parentId    String?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Category[] @relation("CategoryTree")
+  order       Int        @default(0)
+  showInNav   Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  articles    Article[]  @relation("ArticleCategory")
+  subArticles Article[]  @relation("ArticleSubcategory")
+  sections    HomeSection[] @relation("SectionCategory")
+  sections2   HomeSection[] @relation("SectionCategory2")
+}
+
+model Tag {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  slug     String       @unique
+  articles ArticleTag[]
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@index([tagId])
+}
+
+model Media {
+  id         String    @id @default(cuid())
+  kind       String    @default("image") // image | video
+  path       String // relative to UPLOAD_DIR, without size suffix for images
+  widths     String    @default("") // comma-separated generated widths, e.g. "480,960,1600"
+  width      Int       @default(0)
+  height     Int       @default(0)
+  mime       String
+  alt        String    @default("")
+  credit     String?
+  isSample   Boolean   @default(false)
+  uploaderId String?
+  uploader   User?     @relation("MediaUploader", fields: [uploaderId], references: [id], onDelete: SetNull)
+  createdAt  DateTime  @default(now())
+  articles   Article[]
+  avatars    User[]    @relation("UserAvatar")
+  videoThumbs Video[]  @relation("VideoThumb")
+  videoFiles  Video[]  @relation("VideoFile")
+}
+
+model Article {
+  id                String            @id @default(cuid())
+  slug              String            @unique
+  headline          String
+  summary           String
+  body              String
+  status            String            @default("DRAFT") // DRAFT | REVIEW | SCHEDULED | PUBLISHED | ARCHIVED
+  categoryId        String
+  category          Category          @relation("ArticleCategory", fields: [categoryId], references: [id])
+  subcategoryId     String?
+  subcategory       Category?         @relation("ArticleSubcategory", fields: [subcategoryId], references: [id], onDelete: SetNull)
+  authorId          String
+  author            User              @relation("ArticleAuthor", fields: [authorId], references: [id])
+  bylineOverride    String?
+  featuredImageId   String?
+  featuredImage     Media?            @relation(fields: [featuredImageId], references: [id], onDelete: SetNull)
+  imageCaption      String?
+  videoUrl          String?
+  seoTitle          String?
+  seoDescription    String?
+  noindex           Boolean           @default(false)
+  isBreaking        Boolean           @default(false)
+  breakingExpiresAt DateTime?
+  isEditorsPick     Boolean           @default(false)
+  isSponsored       Boolean           @default(false)
+  sponsorName       String?
+  isSample          Boolean           @default(false)
+  editorialRank     Int               @default(0)
+  publishedAt       DateTime?
+  contentUpdatedAt  DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  tags              ArticleTag[]
+  revisions         ArticleRevision[]
+  oldSlugs          SlugRedirect[]
+  views             ArticleViewDaily[]
+
+  @@index([status, publishedAt])
+  @@index([categoryId, status, publishedAt])
+  @@index([authorId])
+}
+
+model ArticleRevision {
+  id        String   @id @default(cuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  editorId  String?
+  editor    User?    @relation(fields: [editorId], references: [id], onDelete: SetNull)
+  headline  String
+  summary   String
+  body      String
+  status    String
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([articleId, createdAt])
+}
+
+// Anonymous, aggregated daily view counts. No IP address, cookie or user id is stored.
+model ArticleViewDaily {
+  articleId String
+  day       String // YYYY-MM-DD (UTC)
+  count     Int     @default(0)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, day])
+  @@index([day])
+}
+
+model Video {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  description String    @default("")
+  youtubeId   String?
+  fileId      String?
+  file        Media?    @relation("VideoFile", fields: [fileId], references: [id], onDelete: SetNull)
+  thumbnailId String?
+  thumbnail   Media?    @relation("VideoThumb", fields: [thumbnailId], references: [id], onDelete: SetNull)
+  status      String    @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
+  isSample    Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, publishedAt])
+}
+
+model HomeSection {
+  id          String    @id @default(cuid())
+  kind        String // CATEGORY | CATEGORY_PAIR | VIDEO | POPULAR | EDITORS_PICK
+  title       String
+  categoryId  String?
+  category    Category? @relation("SectionCategory", fields: [categoryId], references: [id], onDelete: Cascade)
+  category2Id String?
+  category2   Category? @relation("SectionCategory2", fields: [category2Id], references: [id], onDelete: SetNull)
+  order      Int       @default(0)
+  enabled    Boolean   @default(true)
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model Page {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  body          String
+  isPlaceholder Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+}
+
+model ContactMessage {
+  id         String   @id @default(cuid())
+  kind       String   @default("GENERAL") // GENERAL | CORRECTION | ADVERTISING
+  name       String
+  email      String
+  subject    String?
+  message    String
+  articleUrl String?
+  status     String   @default("NEW") // NEW | READ | RESOLVED
+  createdAt  DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
+// Old article URLs keep working after a slug change (301 to the current URL).
+model SlugRedirect {
+  slug      String  @id
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
