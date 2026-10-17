@@ -15,7 +15,7 @@
     "postgres:schema": "node scripts/make-postgres-schema.mjs",
     "postgres:migrate": "prisma migrate deploy --schema prisma/postgres/schema.prisma",
     "build:postgres": "prisma generate --schema prisma/postgres/schema.prisma && next build",
-    "start:production": "prisma migrate deploy --schema prisma/postgres/schema.prisma && SEED_SAMPLE_CONTENT=false tsx prisma/seed.ts && next start"
+    "start:production": "prisma migrate deploy --schema prisma/postgres/schema.prisma && SEED_SAMPLE_CONTENT=false tsx prisma/seed.ts && tsx prisma/import-news.ts && next start"
   },
   "dependencies": {
     "@fontsource/hind-siliguri": "^5.3.0",
