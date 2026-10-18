@@ -18,6 +18,7 @@ import { saveImageBuffer } from "../src/lib/media-core";
 import { uploadDir } from "../src/lib/env";
 import { BATCH as BATCH_2026_10_17 } from "./news-import/2026-10-17";
 import { BATCH as BATCH_2026_10_17B } from "./news-import/2026-10-17b";
+import { BATCH as BATCH_2026_10_18 } from "./news-import/2026-10-18";
 
 export type ImportArticle = {
   slug: string;
@@ -28,14 +29,14 @@ export type ImportArticle = {
   summary: string;
   body: string;
   tags: string[];
-  /** A Wikimedia Commons file name, without the "File:" prefix. */
+  /** A Wikimedia Commons file name without the "File:" prefix, or "Category:<name>" to use that category's first file. */
   image?: { file: string; alt: string; caption: string };
   isEditorsPick?: boolean;
   isBreaking?: boolean;
   editorialRank?: number;
 };
 
-const BATCHES: ImportArticle[][] = [BATCH_2026_10_17, BATCH_2026_10_17B];
+const BATCHES: ImportArticle[][] = [BATCH_2026_10_17, BATCH_2026_10_17B, BATCH_2026_10_18];
 
 const COMMONS_CREDIT = "Wikimedia Commons";
 const USER_AGENT = "BritishBanglaNewsImporter/1.0 (newsroom photo import)";
@@ -45,10 +46,13 @@ const stripHtml = (s: string) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").
 /** Downloads a Commons file (1600px rendition) and its author/licence for the credit. */
 async function commonsImage(file: string) {
   const api = new URL("https://commons.wikimedia.org/w/api.php");
+  const source = file.startsWith("Category:")
+    ? { generator: "categorymembers", gcmtitle: file, gcmtype: "file", gcmlimit: "1" }
+    : { titles: `File:${file}` };
   api.search = new URLSearchParams({
     action: "query",
     format: "json",
-    titles: `File:${file}`,
+    ...source,
     prop: "imageinfo",
     iiprop: "url|extmetadata",
     iiurlwidth: "1600",
