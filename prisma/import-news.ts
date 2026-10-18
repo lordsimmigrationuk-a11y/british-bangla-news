@@ -46,7 +46,7 @@ const stripHtml = (s: string) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").
 /** Downloads a Commons file (1600px rendition) and its author/licence for the credit. */
 async function commonsImage(file: string) {
   const api = new URL("https://commons.wikimedia.org/w/api.php");
-  const source = file.startsWith("Category:")
+  const source: Record<string, string> = file.startsWith("Category:")
     ? { generator: "categorymembers", gcmtitle: file, gcmtype: "file", gcmlimit: "1" }
     : { titles: `File:${file}` };
   api.search = new URLSearchParams({
