@@ -41,6 +41,15 @@ const BATCHES: ImportArticle[][] = [BATCH_2026_10_17, BATCH_2026_10_17B, BATCH_2
 const COMMONS_CREDIT = "Wikimedia Commons";
 const USER_AGENT = "BritishBanglaNewsImporter/1.0 (newsroom photo import)";
 
+/** Commons rate-limits bursts of downloads (429), so retry a few times with a growing pause. */
+async function fetchCommons(url: URL | string) {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+    if ((res.status !== 429 && res.status < 500) || attempt === 3) return res;
+    await new Promise((r) => setTimeout(r, 5000 * (attempt + 1)));
+  }
+}
+
 const stripHtml = (s: string) => s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
 
 /** Downloads a Commons file (1600px rendition) and its author/licence for the credit. */
@@ -57,7 +66,7 @@ async function commonsImage(file: string) {
     iiprop: "url|extmetadata",
     iiurlwidth: "1600",
   }).toString();
-  const res = await fetch(api, { headers: { "User-Agent": USER_AGENT } });
+  const res = await fetchCommons(api);
   if (!res.ok) throw new Error(`Commons API ${res.status}`);
   const json = await res.json();
   const page = Object.values(json?.query?.pages ?? {})[0] as
@@ -65,7 +74,7 @@ async function commonsImage(file: string) {
     | undefined;
   const info = page?.imageinfo?.[0];
   if (!info) throw new Error(`Commons file not found: ${file}`);
-  const img = await fetch(info.thumburl ?? info.url, { headers: { "User-Agent": USER_AGENT } });
+  const img = await fetchCommons(info.thumburl ?? info.url);
   if (!img.ok) throw new Error(`Commons download ${img.status}`);
   const artist = stripHtml(info.extmetadata?.Artist?.value ?? "");
   const licence = stripHtml(info.extmetadata?.LicenseShortName?.value ?? "");
@@ -99,6 +108,7 @@ async function attachImages(authorId: string) {
         data: { featuredImageId: media.id, imageCaption: art.imageCaption ?? a.image.caption },
       });
       added++;
+      await new Promise((r) => setTimeout(r, 1000));
     } catch (e) {
       console.log(`News import: photo for ${a.slug} skipped (${e instanceof Error ? e.message : e}).`);
     }

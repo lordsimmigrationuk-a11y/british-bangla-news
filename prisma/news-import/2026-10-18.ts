@@ -185,9 +185,9 @@ export const BATCH: ImportArticle[] = [
   {
     slug: "saudi-uae-reunite-against-houthis-yemen",
     image: {
-      file: "Old Town Aden Yemen.jpg",
+      file: "Street Scene Aden Yemen.jpg",
       alt: "ইয়েমেনের এডেন শহর",
-      caption: "ইয়েমেনের বন্দরনগরী এডেন। ফাইল ছবি",
+      caption: "ইয়েমেনের বন্দরনগরী এডেনের রাস্তা। ফাইল ছবি",
     },
     cat: "international",
     publishedAt: "2026-10-18T12:30:00Z",
