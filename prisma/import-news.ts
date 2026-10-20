@@ -19,6 +19,7 @@ import { uploadDir } from "../src/lib/env";
 import { BATCH as BATCH_2026_10_17 } from "./news-import/2026-10-17";
 import { BATCH as BATCH_2026_10_17B } from "./news-import/2026-10-17b";
 import { BATCH as BATCH_2026_10_18 } from "./news-import/2026-10-18";
+import { BATCH as BATCH_2026_10_20 } from "./news-import/2026-10-20";
 
 export type ImportArticle = {
   slug: string;
@@ -36,7 +37,7 @@ export type ImportArticle = {
   editorialRank?: number;
 };
 
-const BATCHES: ImportArticle[][] = [BATCH_2026_10_17, BATCH_2026_10_17B, BATCH_2026_10_18];
+const BATCHES: ImportArticle[][] = [BATCH_2026_10_17, BATCH_2026_10_17B, BATCH_2026_10_18, BATCH_2026_10_20];
 
 const COMMONS_CREDIT = "Wikimedia Commons";
 const USER_AGENT = "BritishBanglaNewsImporter/1.0 (newsroom photo import)";
