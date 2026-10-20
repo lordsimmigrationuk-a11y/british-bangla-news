@@ -99,14 +99,18 @@ async function attachImages(authorId: string) {
     if (!a.image) continue;
     const art = await db.article.findUnique({ where: { slug: a.slug }, include: { featuredImage: true } });
     if (!art) continue;
+    // An imported Commons photo is replaced when its file is gone or the batch now names a
+    // different photo (a new alt text); any other photo was chosen in Admin and is kept.
     const current = art.featuredImage;
-    if (current && !(current.credit?.includes(COMMONS_CREDIT) && (await fileMissing(current)))) continue;
+    const imported = !!current?.credit?.includes(COMMONS_CREDIT);
+    const swap = imported && current!.alt !== a.image.alt;
+    if (current && !(imported && (swap || (await fileMissing(current))))) continue;
     try {
       const { buffer, credit } = await commonsImage(a.image.file);
       const media = await saveImageBuffer(buffer, { alt: a.image.alt, credit, uploaderId: authorId });
       await db.article.update({
         where: { id: art.id },
-        data: { featuredImageId: media.id, imageCaption: art.imageCaption ?? a.image.caption },
+        data: { featuredImageId: media.id, imageCaption: swap ? a.image.caption : (art.imageCaption ?? a.image.caption) },
       });
       added++;
       await new Promise((r) => setTimeout(r, 1000));

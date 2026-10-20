@@ -12,9 +12,9 @@ export const BATCH: ImportArticle[] = [
   {
     slug: "ishraque-resignation-accepted-gazette-issued",
     image: {
-      file: "Category:Ishraque Hossain",
-      alt: "বিএনপি নেতা ইশরাক হোসেন",
-      caption: "ইশরাক হোসেন। ফাইল ছবি",
+      file: "Mirza Fakhrul Islam Alamgir-2023.jpg",
+      alt: "রাষ্ট্রপতি মির্জা ফখরুল ইসলাম আলমগীর",
+      caption: "রাষ্ট্রপতি মির্জা ফখরুল ইসলাম আলমগীর। ফাইল ছবি",
     },
     cat: "politics",
     publishedAt: "2026-10-20T13:00:00Z",
