@@ -9,7 +9,9 @@
  * while it has none (or while the imported file is missing from storage), so a photo
  * chosen in Admin is never replaced.
  *
- * Run with: npx tsx prisma/import-news.ts
+ * Run with: npx tsx prisma/import-news.ts [--articles | --photos]
+ * Production start runs --articles before the server and --photos in the background, so
+ * slow photo downloads never hold up startup past the deploy health check.
  */
 import { access } from "node:fs/promises";
 import path from "node:path";
@@ -132,6 +134,12 @@ async function main() {
     return;
   }
 
+  const mode = process.argv[2];
+  if (mode !== "--photos") await importArticles(author.id);
+  if (mode !== "--articles") await attachImages(author.id);
+}
+
+async function importArticles(authorId: string) {
   let added = 0;
   for (const a of BATCHES.flat()) {
     if (await db.article.findUnique({ where: { slug: a.slug }, select: { id: true } })) continue;
@@ -156,7 +164,7 @@ async function main() {
         status: "PUBLISHED",
         categoryId: category.id,
         subcategoryId: sub?.id ?? null,
-        authorId: author.id,
+        authorId,
         bylineOverride: "ব্রিটিশ বাংলা নিউজ ডেস্ক",
         isEditorsPick: !!a.isEditorsPick,
         isBreaking: !!a.isBreaking,
@@ -169,7 +177,7 @@ async function main() {
     await db.articleRevision.create({
       data: {
         articleId: art.id,
-        editorId: author.id,
+        editorId: authorId,
         headline: art.headline,
         summary: art.summary,
         body: art.body,
@@ -180,7 +188,6 @@ async function main() {
     added++;
   }
   console.log(`News import: ${added} new article(s) added.`);
-  await attachImages(author.id);
 }
 
 main()
